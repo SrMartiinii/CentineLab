@@ -1,0 +1,55 @@
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.mypy_cache/
+.ruff_cache/
+
+# ── Entornos virtuales ────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── Variables de entorno (¡nunca subir credenciales!) ─────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Base de datos SQLite (datos locales de desarrollo) ────────────────────
+*.db
+*.sqlite
+*.sqlite3
+data/
+
+# ── Tests y cobertura ─────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# ── IDEs ──────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ── Sistemas operativos ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Docker ────────────────────────────────────────────────────────────────
+# No ignorar docker-compose.yml (es parte del proyecto)
+# Sí ignorar overrides locales:
+docker-compose.override.yml
+
+# ── Logs ──────────────────────────────────────────────────────────────────
+*.log
+logs/

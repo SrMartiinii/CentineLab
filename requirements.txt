@@ -1,0 +1,19 @@
+# ── Framework principal ────────────────────────────────────────────────────
+fastapi>=0.115.0          # Framework web asíncrono para la API REST
+uvicorn[standard]>=0.32.0 # Servidor ASGI para ejecutar FastAPI
+
+# ── Base de datos ──────────────────────────────────────────────────────────
+sqlalchemy>=2.0.36        # ORM para gestión de modelos y consultas
+alembic>=1.14.0           # Migraciones de BBDD (para producción con PostgreSQL)
+# psycopg2-binary>=2.9.10 # Driver PostgreSQL — descomentar para producción
+
+# ── Validación y configuración ─────────────────────────────────────────────
+pydantic[email]>=2.10.0   # Validación de datos + validación de emails
+pydantic-settings>=2.7.0  # Lectura de .env y variables de entorno
+
+# ── Notificaciones ─────────────────────────────────────────────────────────
+httpx>=0.28.0             # Cliente HTTP para webhooks (Slack, Teams…)
+
+# ── Testing ────────────────────────────────────────────────────────────────
+pytest>=8.3.0             # Framework de tests
+pytest-cov>=6.0.0         # Cobertura de código

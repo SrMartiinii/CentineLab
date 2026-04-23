@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CentineLab — Vigilancia Clínica Inteligente</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Crimson+Pro:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e0f;
+    --surface: #111618;
+    --surface2: #161d1f;
+    --border: #1e2a2d;
+    --accent: #00e5b0;
+    --accent2: #ff4d6d;
+    --accent3: #4da6ff;
+    --text: #e8f0ef;
+    --muted: #5a7070;
+    --muted2: #8aa8a8;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* GRID BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,176,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,176,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,14,15,0.85);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--text); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted2);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.8rem;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 3rem 4rem;
+    z-index: 1;
+  }
+
+  .hero-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: inline-block;
+    width: 2rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 1.5rem;
+    max-width: 14ch;
+  }
+
+  .hero h1 .hl { color: var(--accent); }
+  .hero h1 .hl2 { color: var(--accent2); }
+
+  .hero-sub {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 1.35rem;
+    color: var(--muted2);
+    max-width: 52ch;
+    margin-bottom: 3rem;
+    line-height: 1.5;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    font-weight: bold;
+  }
+
+  .btn-primary:hover { background: #00ffca; transform: translateY(-2px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-stats {
+    position: absolute;
+    right: 3rem;
+    bottom: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: right;
+  }
+
+  .stat-item .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-item .stat-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* PULSE ANIMATION */
+  .pulse-ring {
+    position: absolute;
+    top: 50%;
+    right: 15%;
+    transform: translateY(-50%);
+    width: 300px;
+    height: 300px;
+    pointer-events: none;
+  }
+
+  .pulse-ring::before,
+  .pulse-ring::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    opacity: 0;
+    animation: pulse-out 3s ease-out infinite;
+  }
+
+  .pulse-ring::after { animation-delay: 1.5s; }
+
+  @keyframes pulse-out {
+    0% { transform: scale(0.3); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 0; }
+  }
+
+  .pulse-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+    opacity: 0.4;
+  }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 3rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 200px;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 1rem;
+  }
+
+  /* PROBLEM */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .problem-card {
+    padding: 2rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .problem-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .problem-card.danger::before { background: var(--accent2); }
+  .problem-card.solution::before { background: var(--accent); }
+
+  .card-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  .card-body {
+    color: var(--muted2);
+    font-size: 0.82rem;
+    line-height: 1.8;
+  }
+
+  /* CIRCUIT / FLOW */
+  .flow-container {
+    margin-top: 4rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    position: relative;
+  }
+
+  .flow-connector {
+    position: absolute;
+    top: 52px;
+    left: calc(25% - 0px);
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), var(--accent3), var(--accent2));
+    width: 75%;
+    left: 12.5%;
+    z-index: 0;
+  }
+
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-num {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .step-num::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid;
+    transform: rotate(45deg);
+  }
+
+  .flow-step:nth-child(1) .step-num { color: var(--accent); }
+  .flow-step:nth-child(1) .step-num::before { border-color: var(--accent); }
+  .flow-step:nth-child(2) .step-num { color: var(--accent3); }
+  .flow-step:nth-child(2) .step-num::before { border-color: var(--accent3); }
+  .flow-step:nth-child(3) .step-num { color: #ffd166; }
+  .flow-step:nth-child(3) .step-num::before { border-color: #ffd166; }
+  .flow-step:nth-child(4) .step-num { color: var(--accent2); }
+  .flow-step:nth-child(4) .step-num::before { border-color: var(--accent2); }
+
+  .step-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .step-desc {
+    color: var(--muted2);
+    font-size: 0.75rem;
+    line-height: 1.7;
+  }
+
+  .step-tag {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* TECH STACK */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 3rem;
+  }
+
+  .stack-item {
+    background: var(--surface);
+    padding: 2rem 1.5rem;
+    transition: background 0.2s;
+  }
+
+  .stack-item:hover { background: var(--surface2); }
+
+  .stack-tech {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+
+  .stack-role {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+  }
+
+  .stack-desc {
+    color: var(--muted2);
+    font-size: 0.78rem;
+    line-height: 1.7;
+  }
+
+  /* ALERTS */
+  .alerts-intro {
+    color: var(--muted2);
+    max-width: 60ch;
+    margin-bottom: 3rem;
+    font-size: 0.85rem;
+    line-height: 1.8;
+  }
+
+  .alert-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+  }
+
+  .alert-table thead th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .alert-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .alert-table tbody tr:hover { background: var(--surface2); }
+
+  .alert-table td {
+    padding: 0.9rem 1rem;
+    color: var(--muted2);
+  }
+
+  .alert-table td:first-child {
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+  }
+
+  .severity {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+
+  .severity.critical { background: rgba(255,77,109,0.15); color: var(--accent2); border: 1px solid var(--accent2); }
+  .severity.high { background: rgba(255,209,102,0.1); color: #ffd166; border: 1px solid #ffd166; }
+  .severity.medium { background: rgba(77,166,255,0.1); color: var(--accent3); border: 1px solid var(--accent3); }
+
+  /* ARCHITECTURE */
+  .arch-diagram {
+    margin-top: 3rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 3rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted2);
+    line-height: 2;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .arch-diagram .node { color: var(--accent); }
+  .arch-diagram .arrow { color: var(--muted); }
+  .arch-diagram .label { color: var(--text); }
+  .arch-diagram .warn { color: var(--accent2); }
+  .arch-diagram .info { color: var(--accent3); }
+
+  /* ROADMAP */
+  .roadmap-list {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .roadmap-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 2rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+
+  .roadmap-phase {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 0.15rem;
+  }
+
+  .roadmap-content-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  .roadmap-content-desc {
+    color: var(--muted2);
+    font-size: 0.78rem;
+    line-height: 1.7;
+  }
+
+  .phase-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+  }
+
+  .phase-done .phase-dot { background: var(--accent); }
+  .phase-wip .phase-dot { background: #ffd166; animation: blink 1.5s ease-in-out infinite; }
+  .phase-next .phase-dot { background: var(--muted); }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  .footer-logo span { color: var(--muted); }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .footer-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--accent); }
+
+  .footer-copy {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* SCROLL ANIMATIONS */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* CODE BADGE */
+  code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 0.1em 0.4em;
+    font-size: 0.85em;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links, .nav-badge { display: none; }
+    section { padding: 4rem 1.5rem; }
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .problem-grid, .flow-container, .stack-grid { grid-template-columns: 1fr; }
+    .flow-connector { display: none; }
+    .hero-stats { display: none; }
+    .pulse-ring { display: none; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+    .roadmap-item { grid-template-columns: 1fr; gap: 0.5rem; }
+    .arch-diagram { font-size: 0.6rem; padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Centine<span>Lab</span></a>
+  <ul class="nav-links">
+    <li><a href="#problema">Problema</a></li>
+    <li><a href="#circuito">Circuito</a></li>
+    <li><a href="#stack">Stack</a></li>
+    <li><a href="#alertas">Alertas</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+  </ul>
+  <span class="nav-badge">v0.1 · Concepto</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="pulse-ring"><div class="pulse-core"></div></div>
+
+  <p class="hero-tag">Proyecto de portfolio · Salud digital · Backend Python</p>
+
+  <h1>
+    Vigilancia<br>
+    <span class="hl">clínica</span><br>
+    <span class="hl2">inteligente</span>
+  </h1>
+
+  <p class="hero-sub">
+    Sistema backend que detecta alteraciones graves en analíticas de sangre
+    y notifica automáticamente al personal sanitario asignado.
+  </p>
+
+  <div class="hero-actions">
+    <a href="https://github.com" class="btn btn-primary" target="_blank">
+      ↗ Ver en GitHub
+    </a>
+    <a href="#circuito" class="btn btn-outline">
+      → Ver circuito clínico
+    </a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">18+</div>
+      <div class="stat-label">Parámetros<br>monitorizados</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">&lt;1s</div>
+      <div class="stat-label">Latencia<br>de alerta</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Canales<br>de notificación</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section id="problema">
+  <p class="section-label">01 · El problema</p>
+  <h2>Tiempo crítico<br>mal gestionado</h2>
+
+  <div class="problem-grid fade-in">
+    <div class="problem-card danger">
+      <div class="card-icon">⚠️</div>
+      <div class="card-title">El proceso manual falla</div>
+      <div class="card-body">
+        En muchos centros de salud, la detección de valores críticos en analíticas depende de que un profesional revise manualmente cada resultado. Esto genera retrasos que pueden ser fatales en situaciones de emergencia: hiperpotasemia severa, glucosa crítica, troponinas elevadas.
+      </div>
+    </div>
+    <div class="problem-card solution">
+      <div class="card-icon">🎯</div>
+      <div class="card-title">CentineLab resuelve esto</div>
+      <div class="card-body">
+        Automatiza la detección de valores fuera de rango clínico y dispara notificaciones en tiempo real al enfermero y médico responsables de ese paciente. Trazabilidad completa desde la extracción hasta el aviso, con registro de acciones y auditoría.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CIRCUITO -->
+<section id="circuito">
+  <p class="section-label">02 · Circuito clínico</p>
+  <h2>Del paciente<br>a la alerta</h2>
+
+  <div class="flow-container fade-in">
+    <div class="flow-connector"></div>
+
+    <div class="flow-step">
+      <div class="step-num">01</div>
+      <div class="step-icon">🏥</div>
+      <div class="step-title">Recepción</div>
+      <div class="step-desc">
+        El paciente llega con la petición que incluye códigos de barras únicos y pegatinas para los botes de analítica.
+      </div>
+      <span class="step-tag">QR / Barcode</span>
+    </div>
+
+    <div class="flow-step">
+      <div class="step-num">02</div>
+      <div class="step-icon">🩸</div>
+      <div class="step-title">Extracción</div>
+      <div class="step-desc">
+        El sanitario etiqueta los botes con las pegatinas del paciente. Trazabilidad garantizada, cero confusiones.
+      </div>
+      <span class="step-tag">Trazabilidad</span>
+    </div>
+
+    <div class="flow-step">
+      <div class="step-num">03</div>
+      <div class="step-icon">🔗</div>
+      <div class="step-title">Asignación</div>
+      <div class="step-desc">
+        El sanitario vincula la petición a un enfermero y médico mediante su ID. Cada analítica tiene responsables identificados.
+      </div>
+      <span class="step-tag">ID Sanitario</span>
+    </div>
+
+    <div class="flow-step">
+      <div class="step-num">04</div>
+      <div class="step-icon">🔔</div>
+      <div class="step-title">Alerta</div>
+      <div class="step-desc">
+        El sistema analiza los resultados. Si detecta valores críticos, notifica automáticamente por email y webhook.
+      </div>
+      <span class="step-tag">Notificación</span>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section id="stack">
+  <p class="section-label">03 · Stack tecnológico</p>
+  <h2>Construido para<br>escalar</h2>
+
+  <div class="stack-grid fade-in">
+    <div class="stack-item">
+      <div class="stack-tech">FastAPI</div>
+      <div class="stack-role">Framework · API REST</div>
+      <div class="stack-desc">API REST asíncrona con validación automática de esquemas mediante Pydantic. Documentación OpenAPI generada automáticamente.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tech">SQLite / PostgreSQL</div>
+      <div class="stack-role">Base de datos</div>
+      <div class="stack-desc">SQLite para desarrollo local y pruebas rápidas. PostgreSQL en producción para entornos clínicos reales con alta concurrencia.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tech">SQLAlchemy</div>
+      <div class="stack-role">ORM</div>
+      <div class="stack-desc">Modelos relacionales limpios: Paciente, Petición, Analítica, Resultado, Sanitario. Migraciones gestionadas con Alembic.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tech">SMTP + Webhooks</div>
+      <div class="stack-role">Notificaciones</div>
+      <div class="stack-desc">Sistema dual: email directo al sanitario asignado y webhook configurable para integración con Slack, Teams o sistemas hospitalarios.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tech">Pytest</div>
+      <div class="stack-role">Testing</div>
+      <div class="stack-desc">Suite de tests unitarios e integración cubriendo los rangos de alerta clínica y el flujo completo de notificación.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tech">Docker</div>
+      <div class="stack-role">Despliegue</div>
+      <div class="stack-desc">Contenedorizado para despliegue reproducible. <code>docker-compose</code> con servicios API, base de datos y worker de notificaciones.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ALERTAS -->
+<section id="alertas">
+  <p class="section-label">04 · Motor de alertas</p>
+  <h2>Valores críticos<br>detectados</h2>
+
+  <p class="alerts-intro">
+    El motor de alertas evalúa cada resultado contra rangos clínicos de referencia.
+    La severidad determina el canal y la urgencia de la notificación. Los rangos son configurables por centro.
+  </p>
+
+  <table class="alert-table fade-in">
+    <thead>
+      <tr>
+        <th>Parámetro</th>
+        <th>Valor crítico</th>
+        <th>Severidad</th>
+        <th>Acción automática</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Potasio (K⁺)</td>
+        <td>&gt; 6.5 mEq/L · &lt; 2.5 mEq/L</td>
+        <td><span class="severity critical">Crítica</span></td>
+        <td>Email + Webhook inmediato</td>
+      </tr>
+      <tr>
+        <td>Glucosa</td>
+        <td>&gt; 500 mg/dL · &lt; 40 mg/dL</td>
+        <td><span class="severity critical">Crítica</span></td>
+        <td>Email + Webhook inmediato</td>
+      </tr>
+      <tr>
+        <td>Troponina I</td>
+        <td>&gt; 0.4 ng/mL</td>
+        <td><span class="severity critical">Crítica</span></td>
+        <td>Email + Webhook inmediato</td>
+      </tr>
+      <tr>
+        <td>Hemoglobina</td>
+        <td>&lt; 7 g/dL · &gt; 20 g/dL</td>
+        <td><span class="severity critical">Crítica</span></td>
+        <td>Email + Webhook inmediato</td>
+      </tr>
+      <tr>
+        <td>Sodio (Na⁺)</td>
+        <td>&gt; 160 mEq/L · &lt; 120 mEq/L</td>
+        <td><span class="severity high">Alta</span></td>
+        <td>Email en &lt; 5 min</td>
+      </tr>
+      <tr>
+        <td>Creatinina</td>
+        <td>&gt; 10 mg/dL</td>
+        <td><span class="severity high">Alta</span></td>
+        <td>Email en &lt; 5 min</td>
+      </tr>
+      <tr>
+        <td>INR / Coagulación</td>
+        <td>&gt; 5.0</td>
+        <td><span class="severity high">Alta</span></td>
+        <td>Email en &lt; 5 min</td>
+      </tr>
+      <tr>
+        <td>Leucocitos</td>
+        <td>&gt; 30.000/μL · &lt; 2.000/μL</td>
+        <td><span class="severity medium">Media</span></td>
+        <td>Notificación en próxima revisión</td>
+      </tr>
+      <tr>
+        <td>Plaquetas</td>
+        <td>&lt; 50.000/μL · &gt; 1.000.000/μL</td>
+        <td><span class="severity medium">Media</span></td>
+        <td>Notificación en próxima revisión</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ARQUITECTURA -->
+<section id="arquitectura">
+  <p class="section-label">05 · Arquitectura</p>
+  <h2>Diseño del<br>sistema</h2>
+
+  <div class="arch-diagram fade-in"><span class="info">┌─────────────────────────────────────────────────────────────────────┐
+│                        CentineLab · Arquitectura                     │
+└─────────────────────────────────────────────────────────────────────┘</span>
+
+<span class="label">  ENTRADA</span>                    <span class="label">CORE</span>                      <span class="label">SALIDA</span>
+
+  <span class="node">┌─────────────┐</span>           <span class="node">┌─────────────────┐</span>
+  <span class="node">│  Petición   │</span>           <span class="node">│   FastAPI REST  │</span>           <span class="info">┌──────────────┐</span>
+  <span class="node">│  (Barcode)  │</span><span class="arrow"> ─────────► </span><span class="node">│   /api/v1/...   │</span><span class="arrow"> ─────────► </span><span class="info">│  Email SMTP  │</span>
+  <span class="node">└─────────────┘</span>           <span class="node">└────────┬────────┘</span>           <span class="info">└──────────────┘</span>
+                                     │
+  <span class="node">┌─────────────┐</span>           <span class="node">┌────────▼────────┐</span>           <span class="warn">┌──────────────┐</span>
+  <span class="node">│  Sanitario  │</span>           <span class="node">│  Motor Alertas  │</span><span class="arrow"> ─────────► </span><span class="warn">│   Webhook    │</span>
+  <span class="node">│  (ID vinc.) │</span><span class="arrow"> ─────────► </span><span class="node">│  Evalúa rangos  │</span>           <span class="warn">│ Slack/Teams  │</span>
+  <span class="node">└─────────────┘</span>           <span class="node">└────────┬────────┘</span>           <span class="warn">└──────────────┘</span>
+                                     │
+  <span class="node">┌─────────────┐</span>           <span class="node">┌────────▼────────┐</span>
+  <span class="node">│  Resultado  │</span>           <span class="node">│  SQLAlchemy ORM │</span>
+  <span class="node">│  Analítica  │</span><span class="arrow"> ─────────► </span><span class="node">│  SQLite / PG    │</span>
+  <span class="node">└─────────────┘</span>           <span class="node">└─────────────────┘</span>
+
+  <span class="info">Modelos principales:</span>  Paciente · Peticion · Muestra · Resultado · Alerta · Sanitario</div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <p class="section-label">06 · Roadmap</p>
+  <h2>Estado actual<br>y próximos pasos</h2>
+
+  <div class="roadmap-list fade-in">
+    <div class="roadmap-item">
+      <div class="roadmap-phase phase-done"><span class="phase-dot"></span>v0.1</div>
+      <div class="roadmap-content">
+        <div class="roadmap-content-title">Diseño de arquitectura y modelos</div>
+        <div class="roadmap-content-desc">Esquema de base de datos, endpoints REST principales, lógica de rangos clínicos configurables.</div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-phase phase-wip"><span class="phase-dot"></span>v0.2</div>
+      <div class="roadmap-content">
+        <div class="roadmap-content-title">Motor de alertas + notificaciones</div>
+        <div class="roadmap-content-desc">Implementación del evaluador de valores críticos, integración SMTP y dispatcher de webhooks con reintentos.</div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-phase phase-next"><span class="phase-dot"></span>v0.3</div>
+      <div class="roadmap-content">
+        <div class="roadmap-content-title">Testing y documentación</div>
+        <div class="roadmap-content-desc">Suite Pytest con cobertura &gt;80%, documentación OpenAPI completa, guía de despliegue con Docker.</div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-phase phase-next"><span class="phase-dot"></span>v1.0</div>
+      <div class="roadmap-content">
+        <div class="roadmap-content-title">Integración HL7 / FHIR</div>
+        <div class="roadmap-content-desc">Compatibilidad con estándares de interoperabilidad hospitalaria. Posible integración con laboratorios reales vía API.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Centine<span>Lab</span></div>
+  <div class="footer-links">
+    <a href="https://github.com" target="_blank">GitHub</a>
+    <a href="#circuito">Documentación</a>
+    <a href="mailto:tu@email.com">Contacto</a>
+  </div>
+  <div class="footer-copy">Proyecto de portfolio · Python + FastAPI · 2025</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Nav scroll effect
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    nav.style.borderBottomColor = window.scrollY > 50
+      ? 'rgba(0,229,176,0.15)'
+      : 'var(--border)';
+  });
+</script>
+</body>
+</html>

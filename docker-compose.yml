@@ -1,0 +1,64 @@
+# ══════════════════════════════════════════════════════════════════════════
+#  docker-compose.yml — CentineLab
+#  Orquestación de los servicios necesarios para ejecutar el sistema completo.
+#
+#  Uso:
+#    Desarrollo:   docker-compose up
+#    Producción:   docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+# ══════════════════════════════════════════════════════════════════════════
+
+services:
+
+  # ── API FastAPI ──────────────────────────────────────────────────────────
+  api:
+    build: .
+    container_name: centinelab_api
+    ports:
+      - "8000:8000"         # API accesible en http://localhost:8000
+    environment:
+      # SQLite para desarrollo: no requiere el servicio 'db'
+      DATABASE_URL: sqlite:///./centinelab.db
+      DEBUG: "true"
+      # Para usar PostgreSQL, comentar la línea anterior y descomentar:
+      # DATABASE_URL: postgresql+psycopg2://centinelab:centinelab@db:5432/centinelab
+    volumes:
+      # Montar el código fuente para hot-reload en desarrollo
+      - ./app:/app/app
+      # Persistir la BBDD SQLite fuera del contenedor
+      - ./data:/app/data
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ── PostgreSQL (opcional — para producción o tests de integración) ────────
+  db:
+    image: postgres:16-alpine
+    container_name: centinelab_db
+    environment:
+      POSTGRES_DB:       centinelab
+      POSTGRES_USER:     centinelab
+      POSTGRES_PASSWORD: centinelab   # Cambiar en producción
+    ports:
+      - "5432:5432"       # Accesible desde el host para herramientas como pgAdmin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U centinelab"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      # Este servicio solo arranca si se especifica el perfil 'postgres'
+      # Uso: docker-compose --profile postgres up
+      - postgres
+
+# ── Volúmenes persistentes ─────────────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local
