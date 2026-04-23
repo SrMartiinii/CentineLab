@@ -7,7 +7,7 @@
 ![status](https://img.shields.io/badge/status-en_desarrollo-yellow)
 ![python](https://img.shields.io/badge/python-3.12-blue)
 ![fastapi](https://img.shields.io/badge/FastAPI-0.115-009688)
-![tests](https://img.shields.io/badge/tests-pytest-0A9EDC)
+[![tests](https://github.com/SrMartiinii/CentineLab/actions/workflows/tests.yml/badge.svg)](https://github.com/SrMartiinii/CentineLab/actions/workflows/tests.yml)
 
 ---
 
