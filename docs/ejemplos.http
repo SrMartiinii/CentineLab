@@ -1,0 +1,94 @@
+### CentineLab - Flujo minimo de prueba
+### Secuencia completa: crear sanitarios, paciente, peticion, muestra y un
+### resultado critico que dispara una alerta.
+###
+### Requiere la API arrancada en local (uvicorn app.main:app --reload).
+
+@baseUrl = http://localhost:8000/api/v1
+
+### 1. Crear enfermero
+POST {{baseUrl}}/sanitarios/
+Content-Type: application/json
+
+{
+  "nombre": "Ana",
+  "apellidos": "Garcia",
+  "codigo_profesional": "ENF-001",
+  "email": "ana.garcia@centinelab.test",
+  "rol": "enfermero"
+}
+
+### 2. Crear medico
+POST {{baseUrl}}/sanitarios/
+Content-Type: application/json
+
+{
+  "nombre": "Carlos",
+  "apellidos": "Ruiz",
+  "codigo_profesional": "MED-001",
+  "email": "carlos.ruiz@centinelab.test",
+  "rol": "medico"
+}
+
+### 3. Crear paciente
+POST {{baseUrl}}/pacientes/
+Content-Type: application/json
+
+{
+  "nombre": "Laura",
+  "apellidos": "Fernandez",
+  "nhc": "NHC-00123",
+  "fecha_nacimiento": "1980-05-14",
+  "telefono": "600111222",
+  "email": "laura.fernandez@test.com"
+}
+
+### 4. Crear peticion (vincula paciente + enfermero + medico)
+### Sustituye los *_id por los IDs devueltos en los pasos 1-3.
+POST {{baseUrl}}/peticiones/
+Content-Type: application/json
+
+{
+  "barcode": "PET-00001",
+  "motivo": "Control rutinario de funcion renal",
+  "paciente_id": 1,
+  "enfermero_id": 1,
+  "medico_id": 2
+}
+
+### 5. Registrar muestra al llegar al laboratorio
+POST {{baseUrl}}/muestras/
+Content-Type: application/json
+
+{
+  "barcode": "MUE-00001",
+  "tipo": "suero",
+  "peticion_id": 1
+}
+
+### 6. Marcar la muestra como recibida
+PATCH {{baseUrl}}/muestras/1/recibida
+Content-Type: application/json
+
+{}
+
+### 7. Registrar un resultado CRITICO (potasio fuera de rango)
+### Umbral critico de potasio: menor de 2.5 o mayor de 6.5 mEq/L
+### Este POST dispara el motor de alertas y, si el SMTP esta configurado,
+### intenta notificar a enfermero y medico.
+POST {{baseUrl}}/resultados/
+Content-Type: application/json
+
+{
+  "parametro": "potasio",
+  "valor": 7.2,
+  "unidad": "mEq/L",
+  "muestra_id": 1,
+  "fuente": "Analizador Roche cobas c311"
+}
+
+### 8. Ver todas las alertas generadas
+GET {{baseUrl}}/alertas/
+
+### 9. Ver solo las alertas que no se han podido notificar
+GET {{baseUrl}}/alertas/?solo_no_notificadas=true
