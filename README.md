@@ -130,7 +130,6 @@ curl -X POST http://localhost:8000/api/v1/sanitarios/ \
 ```
 
 Ver [`docs/ejemplos.http`](./docs/ejemplos.http) para una secuencia completa.
-*(pendiente de subir)*
 
 ## Tests
 
